@@ -4,10 +4,10 @@ const {CLIENT_ID, CLIENT_SECRET, REDIRECT_URI} = process.env;
 
 
 // Initiates the Google Login
-const initiateAuth = (req, res) => {
+const initiateAuth = (req,res) => {
     const url = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=code&scope=profile email`;
     console.log(url)
-    res.redirect(url);
+    res.json({url : url})
 }
 
 // Callback URL for handling the Google Login response
@@ -35,7 +35,7 @@ const callbackUrl = async (req,res) => {
 
     }catch (error){
         console.log(error)
-        res.redirect('/login');
+        res.redirect('http://localhost:5173/');
     }
 }
 
