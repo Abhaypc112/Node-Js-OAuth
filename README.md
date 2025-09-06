@@ -13,9 +13,9 @@
 
 ## How to use
 
-# Clone
-``` git clone ```
-# Install
-``` npm install ```
-# Run
-``` npm run dev ```
+### Clone
+` git clone `
+### Install
+` npm install `
+### Run
+` npm run dev `
