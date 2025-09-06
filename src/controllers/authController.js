@@ -2,6 +2,7 @@ const axios = require('axios');
 require('dotenv').config();
 const {CLIENT_ID, CLIENT_SECRET, REDIRECT_URI} = process.env;
 
+// --------------------------Google OAuth----------------------------
 
 // Initiates the Google Login
 const initiateAuth = (req,res) => {
@@ -39,8 +40,58 @@ const callbackUrl = async (req,res) => {
     }
 }
 
+// --------------------------Email OAuth----------------------------
+
+const randomstring = require('randomstring');
+const sentEmail = require('../utils/sentEmail')
+
+let OTP;
+
+// Generate OTP
+const generateOTP = () => {
+    return randomstring.generate({
+        length : 6,
+        charset :'numeric'
+    });
+};
+
+// Send OTP
+const sendOTP = async (req, res) => {
+    try{
+        const {email} = req.body;
+        const otp = generateOTP();
+        OTP = otp
+        await sentEmail({
+            to : email,
+            subject : 'Your OTP',
+            message : `<p>Your OTP is: <strong>${otp}</strong></p>`
+        })
+        res.status(200).json({
+            success : true,
+            message : 'OTP Send Successfully',
+            otp
+        })
+    }catch(error){
+        console.error('Error sending OTP:', error);
+        res.status(500).json({
+            success : false,
+            error : 'Internal server error'
+        })
+    }
+};
+
+const verifyOTP = async (req, res) => {
+    const {otp} = req.body;
+    if(otp === OTP) {
+        res.status(200).json({ success: true, message: 'OTP verification successful' })
+    }else{
+        res.status(400).json({ success: false, error: 'Invalid OTP' });
+    }
+};
 
 module.exports = {
     initiateAuth,
-    callbackUrl
+    callbackUrl,
+    sendOTP,
+    verifyOTP
 }
